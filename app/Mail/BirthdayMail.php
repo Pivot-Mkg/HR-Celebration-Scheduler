@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Mail;
+
+use App\Models\Employee;
+use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Address;
+use Illuminate\Queue\SerializesModels;
+
+class BirthdayMail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public function __construct(
+        public readonly Employee $employee,
+        public readonly array $config = []
+    ) {}
+
+    public function envelope(): Envelope
+    {
+        $from = $this->config['from_address'] ?? config('mail.from.address');
+        $fromName = $this->config['from_name'] ?? config('mail.from.name');
+
+        return new Envelope(
+            from: new Address($from, $fromName),
+            subject: "Happy Birthday, {$this->employee->employee_name}! 🎉",
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.birthday',
+            with: [
+                'employee'     => $this->employee,
+                'companyName'  => config('app.name'),
+                'currentDate'  => Carbon::today()->format('F j, Y'),
+            ]
+        );
+    }
+}
