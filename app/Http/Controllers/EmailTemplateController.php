@@ -118,7 +118,7 @@ class EmailTemplateController extends Controller
     {
         return $request->validate([
             'name'          => 'required|string|max:255',
-            'event_type'    => 'required|in:birthday,anniversary',
+            'event_type'    => 'required|in:birthday,anniversary,founding_day',
             'subject'       => 'required|string|max:255',
             'body_html'     => 'required|string',
             'body_text'     => 'nullable|string',

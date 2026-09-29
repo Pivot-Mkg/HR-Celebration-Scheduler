@@ -17,6 +17,7 @@ class CelebrationProcessor
     public function __construct(
         private BirthdayService $birthdayService,
         private AnniversaryService $anniversaryService,
+        private FoundingDayService $foundingDayService,
         private TemplateRenderer $renderer,
         private EmailService $emailService,
     ) {}
@@ -33,12 +34,15 @@ class CelebrationProcessor
 
         $birthdays     = $this->birthdayService->getTodaysBirthdays($date);
         $anniversaries = $this->anniversaryService->getTodaysAnniversaries($date);
+        $isFoundingDay = $this->foundingDayService->isFoundingDay($date);
+        $allEmployees  = $isFoundingDay ? \App\Models\Employee::active()->get() : collect();
 
         $results = [
             'date'          => $dateStr,
             'dry_run'       => $dryRun,
             'birthdays'     => $birthdays->count(),
             'anniversaries' => $anniversaries->count(),
+            'founding_day'  => $allEmployees->count(),
             'sent'          => 0,
             'failed'        => 0,
             'skipped'       => 0,
@@ -49,16 +53,29 @@ class CelebrationProcessor
         foreach ($birthdays as $employee) {
             $result = $this->processEvent($employee, 'birthday', $date, $config, $dryRun);
             $results['details'][] = $result;
-            $results[$result['status']]++;
+            $this->incrementStatus($results, $result['status']);
         }
 
         foreach ($anniversaries as $employee) {
             $result = $this->processEvent($employee, 'anniversary', $date, $config, $dryRun);
             $results['details'][] = $result;
-            $results[$result['status']]++;
+            $this->incrementStatus($results, $result['status']);
+        }
+
+        foreach ($allEmployees as $employee) {
+            $result = $this->processEvent($employee, 'founding_day', $date, $config, $dryRun);
+            $results['details'][] = $result;
+            $this->incrementStatus($results, $result['status']);
         }
 
         return $results;
+    }
+
+    private function incrementStatus(array &$results, string $status): void
+    {
+        if (isset($results[$status])) {
+            $results[$status]++;
+        }
     }
 
     private function processEvent(Employee $employee, string $eventType, Carbon $date, array $config, bool $dryRun): array

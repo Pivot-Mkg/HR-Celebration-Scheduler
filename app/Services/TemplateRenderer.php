@@ -14,7 +14,8 @@ class TemplateRenderer
         'department', 'designation',
         'manager_name', 'manager_email',
         'date_of_birth', 'date_of_joining',
-        'years', 'company_name', 'hr_email', 'current_date',
+        'years', 'founding_year', 'years_since_founding',
+        'company_name', 'hr_email', 'current_date',
     ];
 
     public function resolve(Employee $employee, string $eventType, ?Carbon $date = null): array
@@ -26,19 +27,21 @@ class TemplateRenderer
         }
 
         return [
-            'employee_name'   => $employee->employee_name,
-            'employee_code'   => $employee->employee_code,
-            'employee_email'  => $employee->email,
-            'department'      => $employee->department ?? '',
-            'designation'     => $employee->designation ?? '',
-            'manager_name'    => $employee->manager_name ?? '',
-            'manager_email'   => $employee->manager_email ?? '',
-            'date_of_birth'   => $employee->date_of_birth?->format('d M Y') ?? '',
-            'date_of_joining' => $employee->date_of_joining?->format('d M Y') ?? '',
-            'years'           => (string) $years,
-            'company_name'    => config('app.name'),
-            'hr_email'        => config('mail.from.address', ''),
-            'current_date'    => $today->format('d M Y'),
+            'employee_name'       => $employee->employee_name,
+            'employee_code'       => $employee->employee_code,
+            'employee_email'      => $employee->email,
+            'department'          => $employee->department ?? '',
+            'designation'         => $employee->designation ?? '',
+            'manager_name'        => $employee->manager_name ?? '',
+            'manager_email'       => $employee->manager_email ?? '',
+            'date_of_birth'       => $employee->date_of_birth?->format('d M Y') ?? '',
+            'date_of_joining'     => $employee->date_of_joining?->format('d M Y') ?? '',
+            'years'               => (string) $years,
+            'founding_year'       => (string) \App\Services\FoundingDayService::FOUNDING_YEAR,
+            'years_since_founding'=> (string) (int)($today->year - \App\Services\FoundingDayService::FOUNDING_YEAR),
+            'company_name'        => config('app.name'),
+            'hr_email'            => config('mail.from.address', ''),
+            'current_date'        => $today->format('d M Y'),
         ];
     }
 

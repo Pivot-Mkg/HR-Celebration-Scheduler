@@ -10,6 +10,7 @@
         <select name="event_type" class="form-select @error('event_type') is-invalid @enderror" required>
             <option value="birthday"     {{ old('event_type', $template->event_type ?? '') === 'birthday'     ? 'selected' : '' }}>🎂 Birthday</option>
             <option value="anniversary"  {{ old('event_type', $template->event_type ?? '') === 'anniversary'  ? 'selected' : '' }}>🌟 Work Anniversary</option>
+            <option value="founding_day" {{ old('event_type', $template->event_type ?? '') === 'founding_day' ? 'selected' : '' }}>🏢 Founding Day</option>
         </select>
         @error('event_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
     </div>

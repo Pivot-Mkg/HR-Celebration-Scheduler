@@ -29,6 +29,7 @@ class ProcessCelebrations extends Command
 
         $this->line("Birthdays found:     {$results['birthdays']}");
         $this->line("Anniversaries found: {$results['anniversaries']}");
+        $this->line("Founding Day:        " . ($results['founding_day'] > 0 ? "Yes ({$results['founding_day']} employees)" : 'No'));
         $this->line('');
 
         if (empty($results['details'])) {

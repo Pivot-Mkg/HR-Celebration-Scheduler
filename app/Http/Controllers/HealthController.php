@@ -31,9 +31,13 @@ class HealthController extends Controller
         // Templates
         $bdTemplate  = EmailTemplate::active()->forEvent('birthday')->where('is_default', true)->exists();
         $annTemplate = EmailTemplate::active()->forEvent('anniversary')->where('is_default', true)->exists();
+        $fdTemplate  = EmailTemplate::active()->forEvent('founding_day')->where('is_default', true)->exists();
+        $allOk = $bdTemplate && $annTemplate && $fdTemplate;
         $checks['templates'] = [
-            'status'  => ($bdTemplate && $annTemplate) ? 'ok' : 'warning',
-            'message' => 'Birthday: ' . ($bdTemplate ? '✓' : '✗') . '  Anniversary: ' . ($annTemplate ? '✓' : '✗'),
+            'status'  => $allOk ? 'ok' : 'warning',
+            'message' => 'Birthday: ' . ($bdTemplate ? '✓' : '✗')
+                       . '  Anniversary: ' . ($annTemplate ? '✓' : '✗')
+                       . '  Founding Day: ' . ($fdTemplate ? '✓' : '✗'),
         ];
 
         // Scheduler
