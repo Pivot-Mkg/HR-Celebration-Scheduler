@@ -17,8 +17,19 @@
     <div class="col-12">
         <label class="form-label fw-semibold">Email Subject <span class="text-danger">*</span></label>
         <input type="text" name="subject" class="form-control @error('subject') is-invalid @enderror"
-               value="{{ old('subject', $template->subject ?? '') }}" required placeholder="Happy Birthday, {{ '{{' }} employee_name {{ '}}' }}! 🎉">
+               value="{{ old('subject', $template->subject ?? '') }}" required placeholder="Happy Birthday, &#123;&#123; employee_name &#125;&#125;! 🎉">
         @error('subject')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <div class="col-12">
+        <label class="form-label fw-semibold">Upload Banner Image <span class="text-muted small">(optional — replaces the top banner in the email)</span></label>
+        <input type="file" name="banner_image" class="form-control @error('banner_image') is-invalid @enderror"
+               accept="image/webp,image/png,image/jpeg,image/gif">
+        <div class="form-text">Accepted formats: WebP, PNG, JPG, GIF. The uploaded image will be embedded directly in the email so it loads in Gmail.</div>
+        @error('banner_image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        @if(!empty($template->body_html) && str_contains($template->body_html, 'data:image'))
+            <div class="mt-1 text-success" style="font-size:.8rem;"><i data-lucide="check-circle" style="width:13px;height:13px;"></i> This template already has an embedded banner image.</div>
+        @endif
     </div>
 
     <div class="col-12">

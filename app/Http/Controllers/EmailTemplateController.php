@@ -30,6 +30,10 @@ class EmailTemplateController extends Controller
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
 
+        if ($request->hasFile('banner_image')) {
+            $data['body_html'] = $this->embedBannerImage($request->file('banner_image'), $data['body_html']);
+        }
+
         $template = EmailTemplate::create($data);
 
         if ($request->boolean('set_default')) {
@@ -57,6 +61,11 @@ class EmailTemplateController extends Controller
     {
         $data = $this->validateTemplate($request);
         $data['updated_by'] = Auth::id();
+
+        if ($request->hasFile('banner_image')) {
+            $data['body_html'] = $this->embedBannerImage($request->file('banner_image'), $data['body_html']);
+        }
+
         $template->update($data);
 
         if ($request->boolean('set_default')) {
@@ -127,6 +136,30 @@ class EmailTemplateController extends Controller
             'cc_addresses'  => 'nullable|string|max:1000',
             'bcc_addresses' => 'nullable|string|max:1000',
             'is_active'     => 'boolean',
+            'banner_image'  => 'nullable|image|max:5120',
         ]);
+    }
+
+    private function embedBannerImage(\Illuminate\Http\UploadedFile $file, string $html): string
+    {
+        $mime   = $file->getMimeType();
+        $b64    = base64_encode(file_get_contents($file->getRealPath()));
+        $dataUri = "data:{$mime};base64,{$b64}";
+
+        // Replace any existing <img class="banner"> src, or insert one after <div class="wrapper">
+        if (preg_match('/<img[^>]+class=["\']banner["\'][^>]*>/i', $html)) {
+            return preg_replace(
+                '/(<img[^>]+class=["\']banner["\'][^>]*)src=["\'][^"\']*["\']/i',
+                '$1src="' . $dataUri . '"',
+                $html
+            );
+        }
+
+        // No banner img found — insert one right after the opening wrapper div
+        return preg_replace(
+            '/(<div[^>]+class=["\']wrapper["\'][^>]*>)/i',
+            '$1<img src="' . $dataUri . '" alt="Banner" class="banner" style="width:100%;display:block;">',
+            $html
+        );
     }
 }

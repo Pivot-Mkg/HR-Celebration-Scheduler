@@ -3,6 +3,63 @@
 @section('breadcrumb', 'Administration')
 
 @section('content')
+
+{{-- Quick Actions --}}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('scheduler.index') }}" class="card text-decoration-none h-100" style="transition:.15s;border-color:#e5e7eb;">
+            <div class="card-body d-flex align-items-center gap-3 py-3">
+                <div style="width:42px;height:42px;background:#dbeafe;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i data-lucide="circle-play" style="color:#2563eb;width:20px;height:20px;"></i>
+                </div>
+                <div>
+                    <div class="fw-semibold" style="font-size:.88rem;color:#111;">Run Scheduler</div>
+                    <div class="text-muted" style="font-size:.78rem;">Trigger celebration emails</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('logs.index') }}" class="card text-decoration-none h-100" style="transition:.15s;border-color:#e5e7eb;">
+            <div class="card-body d-flex align-items-center gap-3 py-3">
+                <div style="width:42px;height:42px;background:#d1fae5;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i data-lucide="book-open" style="color:#059669;width:20px;height:20px;"></i>
+                </div>
+                <div>
+                    <div class="fw-semibold" style="font-size:.88rem;color:#111;">Email Logs</div>
+                    <div class="text-muted" style="font-size:.78rem;">View all sent emails</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('logs.index') }}?status=failed" class="card text-decoration-none h-100" style="transition:.15s;border-color:#e5e7eb;">
+            <div class="card-body d-flex align-items-center gap-3 py-3">
+                <div style="width:42px;height:42px;background:#fee2e2;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i data-lucide="circle-alert" style="color:#dc2626;width:20px;height:20px;"></i>
+                </div>
+                <div>
+                    <div class="fw-semibold" style="font-size:.88rem;color:#111;">Failed Emails</div>
+                    <div class="text-muted" style="font-size:.78rem;">Review delivery failures</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ route('email.test') }}" class="card text-decoration-none h-100" style="transition:.15s;border-color:#e5e7eb;">
+            <div class="card-body d-flex align-items-center gap-3 py-3">
+                <div style="width:42px;height:42px;background:#f5f3ff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i data-lucide="mail-check" style="color:#7c3aed;width:20px;height:20px;"></i>
+                </div>
+                <div>
+                    <div class="fw-semibold" style="font-size:.88rem;color:#111;">Send Test Email</div>
+                    <div class="text-muted" style="font-size:.78rem;">Verify email delivery</div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
 <div class="row justify-content-center">
 <div class="col-xl-7">
 <div class="card">

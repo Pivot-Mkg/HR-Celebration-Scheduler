@@ -20,6 +20,7 @@ class CelebrationProcessor
         private FoundingDayService $foundingDayService,
         private TemplateRenderer $renderer,
         private EmailService $emailService,
+        private BannerImageService $banner,
     ) {}
 
     /**
@@ -94,7 +95,9 @@ class CelebrationProcessor
             return ['employee' => $employee->employee_name, 'event' => $eventType, 'status' => 'skipped', 'reason' => 'No template'];
         }
 
-        $rendered = $this->renderer->renderTemplate($template, $employee, $eventType, $date);
+        $bannerBytes = $this->banner->generateBytes($eventType, $employee);
+        $extras      = ['banner_image' => 'cid:pivot_banner'];
+        $rendered    = $this->renderer->renderTemplate($template, $employee, $eventType, $date, $extras);
 
         if ($dryRun) {
             return [
@@ -111,8 +114,13 @@ class CelebrationProcessor
         try {
             $fromEmail = $template->from_email ?: ($config['from_address'] ?? config('mail.from.address'));
             $fromName  = $template->from_name  ?: ($config['from_name']    ?? config('mail.from.name'));
-            $cc        = $template->cc_addresses  ?: ($config['cc'] ?? '');
-            $bcc       = $template->bcc_addresses ?: ($config['bcc'] ?? '');
+            // Founding day: CC all active employees; others: use template CC
+            if ($eventType === 'founding_day') {
+                $cc = \App\Models\Employee::active()->whereNotNull('email')->where('email', '!=', '')->pluck('email')->implode(', ');
+            } else {
+                $cc = $template->cc_addresses ?: ($config['cc'] ?? '');
+            }
+            $bcc = $template->bcc_addresses ?: ($config['bcc'] ?? '');
 
             $mailable = new TemplateMail(
                 mailSubject: $rendered['subject'],
@@ -120,6 +128,7 @@ class CelebrationProcessor
                 bodyText:    $rendered['body_text'],
                 fromEmail:   $fromEmail,
                 fromName:    $fromName,
+                bannerBytes: $bannerBytes,
             );
 
             $mailSend = Mail::to($employee->email);

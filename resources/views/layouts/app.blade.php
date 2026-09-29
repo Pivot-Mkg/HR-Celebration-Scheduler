@@ -175,20 +175,6 @@
         <a href="{{ route('templates.create') }}" class="nav-link {{ request()->routeIs('templates.create') || request()->routeIs('templates.edit') ? 'active' : '' }}">
             <i data-lucide="circle-plus"></i> New Template
         </a>
-        <a href="{{ route('scheduler.index') }}" class="nav-link {{ request()->routeIs('scheduler.*') ? 'active' : '' }}">
-            <i data-lucide="circle-play"></i> Run Scheduler
-        </a>
-
-        <div class="nav-section">Communication</div>
-        <a href="{{ route('logs.index') }}" class="nav-link {{ request()->routeIs('logs.*') ? 'active' : '' }}">
-            <i data-lucide="book-open"></i> Email Logs
-        </a>
-        <a href="{{ route('logs.index') }}?status=failed" class="nav-link">
-            <i data-lucide="circle-alert"></i> Failed Emails
-        </a>
-        <a href="{{ route('email.test') }}" class="nav-link {{ request()->routeIs('email.*') ? 'active' : '' }}">
-            <i data-lucide="mail-check"></i> Send Test Email
-        </a>
 
         <div class="nav-section">Administration</div>
         <a href="{{ route('settings.email') }}" class="nav-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">

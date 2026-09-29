@@ -13,7 +13,7 @@
         </a>
     </div>
     <div class="card-body">
-        <form method="POST" action="{{ route('templates.update', $template) }}">
+        <form method="POST" action="{{ route('templates.update', $template) }}" enctype="multipart/form-data">
             @csrf @method('PUT')
             @include('templates._form')
             <div class="mt-4 pt-3 border-top d-flex gap-2">

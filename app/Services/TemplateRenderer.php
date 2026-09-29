@@ -16,6 +16,7 @@ class TemplateRenderer
         'date_of_birth', 'date_of_joining',
         'years', 'founding_year', 'years_since_founding',
         'company_name', 'hr_email', 'current_date',
+        'banner_image',
     ];
 
     public function resolve(Employee $employee, string $eventType, ?Carbon $date = null): array
@@ -52,9 +53,9 @@ class TemplateRenderer
         return str_replace($search, $replace, $template);
     }
 
-    public function renderTemplate(EmailTemplate $template, Employee $employee, string $eventType, ?Carbon $date = null): array
+    public function renderTemplate(EmailTemplate $template, Employee $employee, string $eventType, ?Carbon $date = null, array $extras = []): array
     {
-        $vars = $this->resolve($employee, $eventType, $date);
+        $vars = array_merge($this->resolve($employee, $eventType, $date), $extras);
 
         return [
             'subject'   => $this->render($template->subject, $vars),

@@ -4,10 +4,9 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\DataPart;
 
 class TemplateMail extends Mailable
 {
@@ -19,25 +18,34 @@ class TemplateMail extends Mailable
         private readonly ?string $bodyText,
         private readonly string  $fromEmail,
         private readonly string  $fromName,
+        private readonly ?string $bannerBytes = null,
     ) {}
 
-    public function envelope(): Envelope
+    public function build(): static
     {
-        return new Envelope(
-            from: new Address($this->fromEmail, $this->fromName),
-            subject: $this->mailSubject,
-        );
-    }
+        $this->from($this->fromEmail, $this->fromName)
+             ->subject($this->mailSubject)
+             ->html($this->bodyHtml);
 
-    public function content(): Content
-    {
-        return new Content(
-            view: 'emails.template-body',
-            text: 'emails.template-body-text',
-            with: [
-                'bodyHtml' => $this->bodyHtml,
-                'bodyText' => $this->bodyText,
-            ],
-        );
+        $bodyText    = $this->bodyText;
+        $bannerBytes = $this->bannerBytes;
+
+        $this->withSymfonyMessage(function (Email $message) use ($bodyText, $bannerBytes) {
+            if ($bodyText) {
+                $message->text($bodyText);
+            }
+
+            if ($bannerBytes !== null) {
+                $part = (new DataPart($bannerBytes, 'banner.png', 'image/png'))->asInline();
+                $cid  = $part->getContentId();
+                $message->addPart($part);
+
+                $html = $message->getHtmlBody() ?? '';
+                $html = str_replace('cid:pivot_banner', 'cid:' . $cid, $html);
+                $message->html($html);
+            }
+        });
+
+        return $this;
     }
 }

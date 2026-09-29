@@ -31,6 +31,7 @@
                 <select name="type" class="form-select @error('type') is-invalid @enderror" required>
                     <option value="birthday"     {{ request('type') === 'birthday'     ? 'selected' : '' }}>🎂 Birthday</option>
                     <option value="anniversary"  {{ request('type') === 'anniversary'  ? 'selected' : '' }}>🌟 Work Anniversary</option>
+                    <option value="founding_day" {{ request('type') === 'founding_day' ? 'selected' : '' }}>🏢 Founding Day</option>
                 </select>
                 @error('type')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
